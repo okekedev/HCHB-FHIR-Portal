@@ -1,104 +1,420 @@
-/* Custom styling for Healing Hands Dashboard */
+/* Modern styling for Healing Hands Dashboard */
 
-/* Body styles */
-body {
-    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
-}
-
-/* Card hover effects */
-.card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Button styling */
-.btn-primary {
-    background-color: #3F7FBF;
-    border-color: #3F7FBF;
-}
-
-.btn-primary:hover {
-    background-color: #2D6DA8;
-    border-color: #2D6DA8;
-}
-
-/* Link styling */
-a {
-    color: #3F7FBF;
-}
-
-a:hover {
-    color: #2D6DA8;
-}
-
-/* Navbar styling */
-.navbar-brand {
+:root {
+    --primary: #2A6EB8;     /* Primary blue from logo */
+    --secondary: #6697D2;   /* Lighter blue accent */
+    --tertiary: #17466E;    /* Darker blue for depth */
+    --accent: #44C8B0;      /* Teal accent color */
+    --accent-dark: #2AA898; /* Darker teal for hover states */
+    --light: #F8FBFF;       /* Light blue-tinted background */
+    --light-gray: #E9EFF6;  /* Light gray with blue tint */
+    --dark: #0E2A43;        /* Very dark blue for text */
+    --danger: #E63946;      /* Red for errors/warnings */
+    --success: #3CB371;     /* Green for success messages */
+    --transition: all 0.3s ease;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --border-radius: 8px;
+  }
+  
+  /* Body styles */
+  body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+  
+  /* Navbar styling */
+  .navbar {
+    background-color: var(--primary) !important;
+    box-shadow: var(--shadow);
+    padding: 0.8rem 1rem;
+  }
+  
+  .navbar-brand {
     font-weight: 600;
-}
-
-/* Card header styling */
-.card-header {
-    background-color: #F0F4F8;
-    border-bottom: 1px solid #E1E8F0;
-}
-
-.card-header h4 {
+    color: white !important;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--border-radius);
+    margin: 0 0.2rem;
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Card styling */
+  .card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    overflow: hidden;
+    height: 100%;
+    background-color: white;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--light-gray);
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .card-header h4 {
     margin-bottom: 0;
-    color: #3F7FBF;
-}
-
-/* Footer styling */
-footer {
-    margin-top: 4rem;
-}
-
-/* Status indicators */
-.text-success {
-    color: #28A745 !important;
-}
-
-.text-danger {
-    color: #DC3545 !important;
-}
-
-.text-info {
-    color: #17A2B8 !important;
-}
-
-.text-primary {
-    color: #3F7FBF !important;
-}
-
-/* Animation for loading */
-@keyframes pulse {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1.35rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .card-footer {
+    background-color: white;
+    border-top: 1px solid var(--light-gray);
+    padding: 1rem 1.5rem;
+  }
+  
+  /* Button styling */
+  .btn {
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--tertiary);
+    border-color: var(--tertiary);
+    transform: translateY(-2px);
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .btn-link {
+    color: var(--primary);
+  }
+  
+  .btn-link:hover {
+    color: var(--tertiary);
+    text-decoration: none;
+  }
+  
+  /* Progress bar styling */
+  .progress {
+    height: 12px;
+    border-radius: var(--border-radius);
+    background-color: var(--light-gray);
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-bar {
+    border-radius: var(--border-radius);
+    background-color: var(--accent);
+    transition: width 0.5s ease;
+  }
+  
+  .progress-bar-success {
+    background-color: var(--success);
+  }
+  
+  .progress-bar-danger {
+    background-color: var(--danger);
+  }
+  
+  /* Status indicators */
+  .text-success {
+    color: var(--success) !important;
+  }
+  
+  .text-danger {
+    color: var(--danger) !important;
+  }
+  
+  .text-primary {
+    color: var(--primary) !important;
+  }
+  
+  .text-secondary {
+    color: var(--tertiary) !important;
+  }
+  
+  .text-info {
+    color: var(--accent) !important;
+  }
+  
+  .bg-light {
+    background-color: var(--light) !important;
+  }
+  
+  /* Header styling */
+  .display-4 {
+    font-weight: 700;
+    color: var(--tertiary);
+  }
+  
+  /* Log output styling */
+  .log-container {
+    position: relative;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    margin-top: 1rem;
+  }
+  
+  .log-output {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: var(--dark);
+    color: #E0E0E0;
+    border-radius: var(--border-radius);
+    white-space: pre-wrap;
+  }
+  
+  /* Modal styling */
+  .modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .modal-header {
+    background-color: var(--primary);
+    color: white;
+    border-bottom: none;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+  }
+  
+  .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid var(--light-gray);
+    padding: 1rem 1.5rem;
+  }
+  
+  /* Footer styling */
+  footer {
+    padding: 2rem 0;
+    margin-top: 3rem;
+  }
+  
+  /* Animations */
+  @keyframes pulse {
     0% {
-        opacity: 1;
+      opacity: 1;
+      transform: scale(1);
     }
     50% {
-        opacity: 0.5;
+      opacity: 0.8;
+      transform: scale(1.05);
     }
     100% {
-        opacity: 1;
+      opacity: 1;
+      transform: scale(1);
     }
-}
-
-.loading {
-    animation: pulse 1.5s infinite;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Loading spinner */
+  .spinner-border {
+    border-width: 0.15em;
+    border-right-color: transparent !important;
+  }
+  
+  .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
     .container {
-        padding-left: 20px;
-        padding-right: 20px;
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
     }
     
     .card {
-        margin-bottom: 20px;
+      margin-bottom: 1.5rem;
     }
-}
+    
+    .navbar-brand {
+      font-size: 1.2rem;
+    }
+    
+    .display-4 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Add these CSS rules to assets/custom.css */
+
+/* Pulsing loading indicator */
+.loading-pulse {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .loading-pulse::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+    background-size: 200% 100%;
+    animation: gradientSlide 2s infinite linear;
+    z-index: 10;
+  }
+  
+  /* Gradient animation */
+  @keyframes gradientSlide {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  /* Processing animation for spinner */
+  .processing-spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid rgba(74, 144, 226, 0.2);
+    border-top-color: var(--primary);
+    animation: spinner 1s infinite ease-in-out;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+  }
+  
+  .status-badge-running {
+    background-color: rgba(74, 144, 226, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+  }
+  
+  .status-badge-success {
+    background-color: rgba(60, 179, 113, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(60, 179, 113, 0.3);
+  }
+  
+  .status-badge-error {
+    background-color: rgba(230, 57, 70, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+  }
+  
+  /* Loading overlay */
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
+    z-index: 1000;
+  }
+  
+  .loading-overlay-content {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .loading-overlay-icon {
+    margin-bottom: 15px;
+  }
+  
+  .loading-dots {
+    display: inline-block;
+  }
+  
+  .loading-dots::after {
+    content: ".";
+    animation: dots 1.5s steps(5, end) infinite;
+  }
+  
+  @keyframes dots {
+    0%, 20% {
+      content: ".";
+    }
+    40% {
+      content: "..";
+    }
+    60% {
+      content: "...";
+    }
+    80%, 100% {
+      content: "";
+    }
+  }

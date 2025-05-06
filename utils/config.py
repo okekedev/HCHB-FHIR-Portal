@@ -34,6 +34,11 @@ OUTPUT_DIRECTORY = os.getenv('OUTPUT_DIRECTORY', 'output')
 PATIENT_BATCH_SIZE = int(os.getenv('PATIENT_BATCH_SIZE', '1000'))
 ENCOUNTER_BATCH_SIZE = int(os.getenv('ENCOUNTER_BATCH_SIZE', '100'))
 
+# Coordination Notes Configuration
+SYNC_BUFFER_MINUTES = int(os.getenv('SYNC_BUFFER_MINUTES', '30'))
+MAX_PAGES_PER_REQUEST = int(os.getenv('MAX_PAGES_PER_REQUEST', '1000'))
+PAGE_SIZE = int(os.getenv('PAGE_SIZE', '100'))
+
 # Files and Outputs
 PATIENT_DATA_FILENAME = os.getenv('PATIENT_DATA_FILENAME', 'patient_data.csv')
 WEEKLY_APPOINTMENTS_FILENAME = os.getenv('WEEKLY_APPOINTMENTS_FILENAME', 'weekly_appointments.csv')
@@ -77,6 +82,9 @@ def get_config():
         'OUTPUT_DIRECTORY': OUTPUT_DIRECTORY,
         'PATIENT_BATCH_SIZE': PATIENT_BATCH_SIZE,
         'ENCOUNTER_BATCH_SIZE': ENCOUNTER_BATCH_SIZE,
+        'SYNC_BUFFER_MINUTES': SYNC_BUFFER_MINUTES,
+        'MAX_PAGES_PER_REQUEST': MAX_PAGES_PER_REQUEST,
+        'PAGE_SIZE': PAGE_SIZE,
         'PATIENT_DATA_FILENAME': PATIENT_DATA_FILENAME,
         'WEEKLY_APPOINTMENTS_FILENAME': WEEKLY_APPOINTMENTS_FILENAME,
         'COORDINATION_NOTES_FILENAME': COORDINATION_NOTES_FILENAME,
@@ -122,6 +130,11 @@ def print_config_summary(include_secrets=False):
     print(f"Encounter Batch Size: {ENCOUNTER_BATCH_SIZE}")
     print(f"Max Workers: {MAX_WORKERS}")
     print(f"Output Directory: {OUTPUT_DIRECTORY}")
+    
+    # Coordination Notes Configuration
+    print(f"Sync Buffer Minutes: {SYNC_BUFFER_MINUTES}")
+    print(f"Max Pages Per Request: {MAX_PAGES_PER_REQUEST}")
+    print(f"Page Size: {PAGE_SIZE}")
     
     # Filenames
     print("\nOutput Filenames:")

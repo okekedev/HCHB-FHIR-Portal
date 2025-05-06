@@ -22,16 +22,12 @@ from utils.fhir_client import fhir_client
 from utils.sharepoint_client import sharepoint_client
 from utils.logging_setup import configure_logging
 from utils.config import (
-    API_BASE_URL, REQUEST_TIMEOUT, COORDINATION_NOTES_FILENAME
+    API_BASE_URL, REQUEST_TIMEOUT, COORDINATION_NOTES_FILENAME,
+    SYNC_BUFFER_MINUTES, MAX_PAGES_PER_REQUEST, PAGE_SIZE
 )
 
 # Configure logging
 logger = configure_logging('coordination_notes_csv')
-
-# Coordination notes specific configuration
-SYNC_BUFFER_MINUTES = 30
-MAX_PAGES_PER_REQUEST = 1000  # Max pages before advancing date window
-PAGE_SIZE = 100  # Keep smaller to avoid limits
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 def fetch_page(url, params=None):

@@ -1,7 +1,9 @@
 import dash
-from dash import dcc, html, callback, Input, Output, State
+from dash import dcc, html, callback, Input, Output, State, ALL, MATCH
 import dash_bootstrap_components as dbc
 import time
+import json
+from datetime import datetime
 from dotenv import load_dotenv
 import os
 
@@ -17,11 +19,16 @@ from utils.progress_tracker import get_current_progress
 # Load environment variables
 load_dotenv()
 
-# Initialize the Dash app with Bootstrap theme
+# Initialize the Dash app with Bootstrap theme and custom CSS
 app = dash.Dash(
     __name__, 
-    external_stylesheets=[dbc.themes.BOOTSTRAP],
-    assets_folder="assets"
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP,
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',  # Add Font Awesome icons
+        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono&display=swap'  # Add modern fonts
+    ],
+    assets_folder="assets",
+    suppress_callback_exceptions=True
 )
 app.title = "Healing Hands Data Automation"
 server = app.server  # For deployment
@@ -33,13 +40,72 @@ app.layout = html.Div([
     
     # Main container
     dbc.Container([
-        # Header
-        html.Div([
-            html.H1("Healing Hands Data Automation", className="display-4 text-center text-primary my-4"),
-            html.Hr(className="my-4"),
-        ], className="text-center"),
+        # Header with improved styling
+        dbc.Row([
+            dbc.Col([
+                html.Div([
+                    html.H1([
+                        html.I(className="fas fa-heartbeat me-3 text-danger"),
+                        "Healing Hands Data Automation"
+                    ], className="display-4 text-center text-primary my-4 d-flex align-items-center justify-content-center"),
+                    html.P("Streamline patient data collection and care coordination with intelligent automation", 
+                           className="lead text-center text-muted mb-4"),
+                    html.Hr(className="my-4"),
+                ], className="text-center")
+            ])
+        ]),
         
-        # Main content
+        # Dashboard quick stats
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    html.Div([
+                        html.I(className="fas fa-users fa-2x text-primary"),
+                        html.H4("Patient Data", className="mt-3 mb-0"),
+                        html.P("Demographics & Coordination", className="text-muted")
+                    ], className="text-center p-4")
+                ], className="shadow-sm border-0 rounded mb-4")
+            ], width=3),
+            dbc.Col([
+                dbc.Card([
+                    html.Div([
+                        html.I(className="fas fa-calendar-alt fa-2x text-primary"),
+                        html.H4("Appointments", className="mt-3 mb-0"),
+                        html.P("Weekly Scheduling & Visits", className="text-muted")
+                    ], className="text-center p-4")
+                ], className="shadow-sm border-0 rounded mb-4")
+            ], width=3),
+            dbc.Col([
+                dbc.Card([
+                    html.Div([
+                        html.I(className="fas fa-clipboard fa-2x text-primary"),
+                        html.H4("Coordination", className="mt-3 mb-0"),
+                        html.P("Notes & Documentation", className="text-muted")
+                    ], className="text-center p-4")
+                ], className="shadow-sm border-0 rounded mb-4")
+            ], width=3),
+            dbc.Col([
+                dbc.Card([
+                    html.Div([
+                        html.I(className="fas fa-bell fa-2x text-primary"),
+                        html.H4("Alerts", className="mt-3 mb-0"),
+                        html.P("Critical Notifications", className="text-muted")
+                    ], className="text-center p-4")
+                ], className="shadow-sm border-0 rounded mb-4")
+            ], width=3),
+        ]),
+        
+        # Main content - Script cards
+        dbc.Row([
+            dbc.Col([
+                html.H2([
+                    html.I(className="fas fa-tasks me-2"),
+                    "Automation Tools"
+                ], className="mb-4 mt-2 d-flex align-items-center"),
+            ], width=12),
+        ]),
+        
+        # First row of script cards
         dbc.Row([
             # Alert Media Batch Script Card
             dbc.Col([
@@ -57,7 +123,7 @@ app.layout = html.Div([
                         "• Condition API - To identify critical patient conditions",
                     ]
                 )
-            ], width=6, className="mb-4"),
+            ], md=6, xl=4, className="mb-4"),
             
             # Coordination Notes Script Card
             dbc.Col([
@@ -75,7 +141,7 @@ app.layout = html.Div([
                         "• Practitioner API - To identify note authors and recipients",
                     ]
                 )
-            ], width=6, className="mb-4"),
+            ], md=6, xl=4, className="mb-4"),
             
             # Patients Script Card
             dbc.Col([
@@ -95,8 +161,11 @@ app.layout = html.Div([
                         "• Living Arrangement API - To retrieve patient living situation",
                     ]
                 )
-            ], width=6, className="mb-4"),
-            
+            ], md=6, xl=4, className="mb-4"),
+        ]),
+        
+        # Second row of script cards
+        dbc.Row([
             # Weekly Appointments Script Card
             dbc.Col([
                 create_script_card(
@@ -115,7 +184,7 @@ app.layout = html.Div([
                         "• Worker API - To retrieve caregiver information",
                     ]
                 )
-            ], width=6, className="mb-4"),
+            ], md=6, className="mb-4"),
             
             # Workers Script Card
             dbc.Col([
@@ -134,18 +203,85 @@ app.layout = html.Div([
                         "• Organization - Branch API - To retrieve branch assignments",
                     ]
                 )
-            ], width=6, className="mb-4"),
-            
-            # System Status Card
+            ], md=6, className="mb-4"),
+        ]),
+        
+        # System Status Card in a separate row
+        dbc.Row([
             dbc.Col([
-                create_status_card()
-            ], width=6, className="mb-4"),
+                html.H2([
+                    html.I(className="fas fa-chart-line me-2"),
+                    "System Status"
+                ], className="mb-4 mt-2 d-flex align-items-center"),
+            ], width=12),
+            
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-server me-2"),
+                            "System Overview"
+                        ], className="card-title d-flex align-items-center"),
+                    ]),
+                    dbc.CardBody([
+                        html.Div(id="last-refresh"),
+                        html.Div(id="current-process", className="mt-3 fw-bold"),
+                        dbc.Progress(id="progress-bar", value=0, className="my-3"),
+                        html.P(id="progress-text", className="text-muted")
+                    ])
+                ], className="shadow h-100")
+            ], md=12, xl=6, className="mb-4"),
+            
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-cogs me-2"),
+                            "Environment"
+                        ], className="card-title d-flex align-items-center"),
+                    ]),
+                    dbc.CardBody([
+                        html.P([
+                            html.Span("API Status: ", className="fw-bold me-2"),
+                            html.Span([
+                                html.I(className="fas fa-check-circle text-success me-2"),
+                                "Connected"
+                            ], className="d-inline-flex align-items-center")
+                        ]),
+                        html.P([
+                            html.Span("API URL: ", className="fw-bold me-2"),
+                            html.Code(os.getenv('API_BASE_URL', 'https://api.hchb.com/fhir/r4'),
+                                     className="bg-light rounded px-2 py-1")
+                        ]),
+                        html.P([
+                            html.Span("Environment: ", className="fw-bold me-2"),
+                            html.Span(os.getenv('ENV', 'Production'), className="text-primary")
+                        ]),
+                        html.P([
+                            html.Span("Output Directory: ", className="fw-bold me-2"),
+                            html.Code(os.getenv('OUTPUT_DIRECTORY', 'output'),
+                                     className="bg-light rounded px-2 py-1")
+                        ])
+                    ])
+                ], className="shadow h-100")
+            ], md=12, xl=6, className="mb-4"),
         ]),
         
         # Footer
         html.Footer([
-            html.Hr(),
-            html.P("Healing Hands Data Automation Dashboard © 2025", className="text-center text-muted"),
+            html.Hr(className="my-4"),
+            dbc.Row([
+                dbc.Col([
+                    html.P([
+                        html.I(className="fas fa-heartbeat me-2 text-danger"),
+                        "Healing Hands Data Automation Dashboard © 2025"
+                    ], className="text-center text-muted mb-1"),
+                    html.P([
+                        "Powered by ",
+                        html.A("HCHB FHIR API", href="#", className="text-decoration-none")
+                    ], className="text-center text-muted small")
+                ])
+            ])
         ], className="mt-4"),
     ], fluid=True, className="p-4"),
     
@@ -156,40 +292,73 @@ app.layout = html.Div([
     dcc.Interval(id="status-interval", interval=1000, n_intervals=0),
 ])
 
-# Register callbacks for all script cards
-for script_id in ["alert-media", "coordination-notes", "patients", "weekly-appointments", "workers"]:
-    @app.callback(
-        Output(f"output-{script_id}", "children"),
-        Output(f"output-{script_id}", "className"),
-        Input(f"run-{script_id}", "n_clicks"),
-        prevent_initial_call=True
-    )
-    def run_script_callback(n_clicks, script_id=script_id):
-        if not n_clicks:
-            return "", "mt-3 text-muted"
-        
-        # Get script information based on script_id
-        script_paths = {
-            "alert-media": "scripts.alert_media_batch",
-            "coordination-notes": "scripts.coordination_notes_csv",
-            "patients": "scripts.patients_csv",
-            "weekly-appointments": "scripts.weekly_appointments_csv",
-            "workers": "scripts.workers_csv"
-        }
-        
-        script_path = script_paths.get(script_id)
-        status, output = run_script_with_output(script_path)
-        
-        if status == "SUCCESS":
-            return html.Div([
-                html.P("Script executed successfully!", className="fw-bold"),
-                html.P(f"Processed data at {time.strftime('%Y-%m-%d %H:%M:%S')}"),
-            ]), "mt-3 text-success"
-        else:
-            return html.Div([
-                html.P("Script execution failed!", className="fw-bold"),
-                html.P(output),
-            ]), "mt-3 text-danger"
+# Register callbacks for script modals
+@app.callback(
+    Output({"type": "modal", "index": MATCH}, "is_open"),
+    [Input({"type": "open-modal", "index": MATCH}, "n_clicks"),
+     Input({"type": "close-modal", "index": MATCH}, "n_clicks")],
+    [State({"type": "modal", "index": MATCH}, "is_open")],
+    prevent_initial_call=True
+)
+def toggle_modal(open_clicks, close_clicks, is_open):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return dash.no_update
+    prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    if "open-modal" in prop_id:
+        return True
+    elif "close-modal" in prop_id:
+        return False
+    return is_open
+
+# Callback to show/hide log container when script is run
+@app.callback(
+    Output({"type": "log-container", "index": MATCH}, "style"),
+    Input({"type": "run-script", "index": MATCH}, "n_clicks"),
+    prevent_initial_call=True
+)
+def toggle_log_container(n_clicks):
+    """Show log container when script is run"""
+    if n_clicks:
+        return {"display": "block"}
+    return dash.no_update
+
+# Callback for script execution
+@app.callback(
+    Output({"type": "script-output", "index": MATCH}, "children"),
+    Input({"type": "run-script", "index": MATCH}, "n_clicks"),
+    State({"type": "run-script", "index": MATCH}, "id"),
+    prevent_initial_call=True
+)
+def run_script_callback(n_clicks, button_id):
+    if not n_clicks:
+        return dash.no_update
+    
+    # Get script ID from button
+    script_id = button_id["index"]
+    
+    # Get script information based on script_id
+    script_paths = {
+        "alert-media": "scripts.alert_media_batch",
+        "coordination-notes": "scripts.coordination_notes_csv",
+        "patients": "scripts.patients_csv",
+        "weekly-appointments": "scripts.weekly_appointments_csv",
+        "workers": "scripts.workers_csv"
+    }
+    
+    script_path = script_paths.get(script_id)
+    if not script_path:
+        return "Invalid script path"
+    
+    # Run the script
+    status, output = run_script_with_output(script_path)
+    
+    # Format the output with colors
+    colored_output = output
+    if status == "SUCCESS":
+        return colored_output
+    else:
+        return colored_output
 
 # Callback for Last Refresh in Status Card
 @app.callback(
@@ -197,7 +366,11 @@ for script_id in ["alert-media", "coordination-notes", "patients", "weekly-appoi
     Input("status-interval", "n_intervals"),
 )
 def update_last_refresh(n_intervals):
-    return html.P(time.strftime("%Y-%m-%d %H:%M:%S"), className="text-info")
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    return html.P([
+        html.I(className="fas fa-sync-alt me-2"),
+        f"Last Updated: {timestamp}"
+    ], className="text-info")
 
 # Callback for updating progress information
 @app.callback(
@@ -214,7 +387,16 @@ def update_progress(n_intervals):
     progress = get_current_progress()
     
     if not progress:
-        return "None", 0, "", "No active process", "primary"
+        return [
+            html.Span([
+                html.I(className="fas fa-hourglass me-2"),
+                "No Active Process"
+            ]), 
+            0, 
+            "", 
+            "No active process running", 
+            "primary"
+        ]
     
     # Format process name
     process_name = progress["process_name"]
@@ -225,10 +407,13 @@ def update_progress(n_intervals):
     # Determine progress bar color based on status
     if progress["status"] == "completed":
         color = "success"
+        icon = "fas fa-check-circle"
     elif progress["status"] == "error":
         color = "danger"
+        icon = "fas fa-exclamation-circle"
     else:
         color = "primary"
+        icon = "fas fa-sync fa-spin"
     
     # Format progress text
     if progress["status"] == "running":
@@ -241,8 +426,18 @@ def update_progress(n_intervals):
         progress_text = progress["message"]
     
     # Return updated values
-    return process_name, percentage, f"{percentage}%" if percentage > 0 else "", progress_text, color
+    return [
+        html.Span([
+            html.I(className=f"{icon} me-2"),
+            f"Process: {process_name}"
+        ]),
+        percentage, 
+        f"{percentage}%" if percentage > 0 else "", 
+        progress_text, 
+        color
+    ]
 
-# Run the app
+# Print message when starting the app
 if __name__ == "__main__":
+    print("Starting Healing Hands Data Automation dashboard at http://127.0.0.1:8050")
     app.run_server(debug=True)
