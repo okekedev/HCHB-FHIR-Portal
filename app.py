@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 import os
 
 # Import components
-from components.card import create_script_card
-from components.status import create_status_card
 from components.navbar import create_navbar
 
 # Import all callbacks (this will register them automatically)
@@ -109,6 +107,115 @@ script_configs = [
     }
 ]
 
+def create_script_card(title, description, script_id, script_path, api_details=None):
+    """
+    Create a script card for running automation scripts.
+    
+    Args:
+        title: Title of the script card
+        description: Description of the script
+        script_id: Unique ID for the script
+        script_path: Path to the script module
+        api_details: List of API details for the modal
+        
+    Returns:
+        dash component: A dbc.Card component
+    """
+    # Define icon based on script ID
+    icons = {
+        "alert-media": "fas fa-bell",
+        "coordination-notes": "fas fa-clipboard",
+        "patients": "fas fa-user",
+        "weekly-appointments": "fas fa-calendar-alt",
+        "workers": "fas fa-users"
+    }
+    
+    icon_class = icons.get(script_id, "fas fa-cogs")
+    
+    # Create the script card
+    return dbc.Card([
+        dbc.CardHeader([
+            html.H4([
+                html.I(className=f"{icon_class} me-2"),
+                title
+            ], className="card-title d-flex align-items-center"),
+        ]),
+        dbc.CardBody([
+            # Card Content
+            html.P(description, className="card-text mb-4"),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Button([
+                        html.I(className="fas fa-play me-2"),
+                        "Run Script"
+                    ], 
+                    id={"type": "run-script", "index": script_id}, 
+                    color="primary", 
+                    className="me-2"),
+                ], width="auto"),
+                dbc.Col([
+                    dbc.Button([
+                        html.I(className="fas fa-info-circle me-2"),
+                        "API Details"
+                    ], id={"type": "open-modal", "index": script_id}, color="secondary"),
+                ], width="auto"),
+            ], className="mb-4"),
+            
+            # Status indicator (initially hidden) - Fixed ID format to match callback expectations
+            html.Div(
+                id={"type": "script-status-indicator", "index": script_id},
+                className="mb-3",
+                style={"display": "none"}
+            ),
+            
+            # Log container
+            html.Div([
+                html.Hr(className="my-3"),
+                html.H5([
+                    html.I(className="fas fa-terminal me-2"),
+                    "Execution Log:"
+                ], className="mb-3 d-flex align-items-center"),
+                
+                # Output area
+                html.Div(
+                    id={"type": "script-output", "index": script_id}, 
+                    className="log-output",
+                    style={"maxHeight": "250px", "overflowY": "auto"}
+                )
+            ], id={"type": "log-container", "index": script_id}, className="log-container", style={"display": "none"}),
+        ]),
+        
+        # Modal for API Details
+        dbc.Modal([
+            dbc.ModalHeader(dbc.ModalTitle([
+                html.I(className=f"{icon_class} me-2"),
+                f"{title} - API Details"
+            ])),
+            dbc.ModalBody([
+                html.Div([
+                    html.P(api_details[0], className="lead mb-4") if api_details and len(api_details) > 0 else None,
+                    *[
+                        html.P(detail, className="mb-3") 
+                        if not detail.startswith("•") else 
+                        html.Div([
+                            html.I(className="fas fa-check-circle me-2 text-primary"),
+                            detail[1:].strip()
+                        ], className="mb-2 d-flex align-items-center")
+                        for detail in (api_details[1:] if api_details and len(api_details) > 1 else [])
+                    ]
+                ])
+            ]),
+            dbc.ModalFooter(
+                dbc.Button([
+                    html.I(className="fas fa-times me-2"),
+                    "Close"
+                ], id={"type": "close-modal", "index": script_id}, className="ms-auto")
+            ),
+        ], id={"type": "modal", "index": script_id}, is_open=False, size="lg", scrollable=True),
+    ], 
+    className="h-100 shadow", 
+    id={"type": "script-card", "index": script_id})
+
 # Dashboard layout
 app.layout = html.Div([
     # Navigation bar at the top
@@ -146,9 +253,6 @@ app.layout = html.Div([
         sticky="top",
     ),
     
-    # Animated progress bar at the top (initially hidden)
-    html.Div(id="animated-progress-bar", className="animated-progress-bar", style={"display": "none"}),
-    
     # Main container
     dbc.Container([
         # Active Processes Section (at the top)
@@ -162,13 +266,6 @@ app.layout = html.Div([
                         ], className="card-title d-flex align-items-center"),
                     ]),
                     dbc.CardBody([
-                        # API operations indicator (initially hidden)
-                        html.Div([
-                            html.Div(className="processing-spinner"),
-                            html.Span("API Operations Active", className="ms-2")
-                        ], id="api-active-indicator", className="status-badge status-badge-running mb-4", 
-                           style={"display": "none"}),
-                        
                         html.Div(id="active-processes-list", children=[
                             html.P("No active processes", className="text-muted")
                         ], className="p-3")
@@ -186,7 +283,7 @@ app.layout = html.Div([
                 ], className="mb-5 mt-4 d-flex align-items-center"),
             ], width=12),
             
-            # Left Status Column
+            # Left Status Column - API Status with simple spinner
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader([
@@ -200,8 +297,11 @@ app.layout = html.Div([
                             html.Div([
                                 html.Span("API Status: ", className="fw-bold me-2"),
                                 html.Span([
-                                    html.I(className="fas fa-check-circle text-success me-2"),
-                                    "Connected"
+                                    # This spinning circle will only appear on the API card
+                                    html.Div(id="api-spinner", className="processing-spinner", 
+                                           style={"display": "none"}),
+                                    html.I(id="api-status-icon", className="fas fa-check-circle text-success me-2"),
+                                    html.Span(id="api-status-text", children="Connected")
                                 ], className="d-inline-flex align-items-center")
                             ], className="mb-4"),
                             html.Div([
@@ -222,7 +322,7 @@ app.layout = html.Div([
                 ], className="shadow h-100")
             ], md=6, className="mb-5"),
             
-            # Right Status Column
+            # Right Status Column - Simple progress display
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader([
@@ -244,7 +344,7 @@ app.layout = html.Div([
                                     value=0, 
                                     label="0%",
                                     style={"height": "12px"}, 
-                                    className="mb-3 animated-progress"
+                                    className="mb-3"
                                 ),
                                 html.P(id="progress-text", children="No active process", 
                                       className="text-muted fs-6")

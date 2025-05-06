@@ -1,5 +1,4 @@
-README.md
-markdown# Healing Hands Data Automation
+# Healing Hands Data Automation
 
 A comprehensive dashboard and data automation toolkit for healthcare providers using the HCHB FHIR API. This application streamlines patient data collection, coordination note management, and appointment scheduling processes through an intuitive web interface.
 
@@ -22,32 +21,53 @@ A comprehensive dashboard and data automation toolkit for healthcare providers u
 ### Installation
 
 1. Clone the repository
-git clone https://github.com/your-username/healing-hands-data-automation.git
-cd healing-hands-data-automation
+   ```bash
+   git clone https://github.com/your-username/healing-hands-data-automation.git
+   cd healing-hands-data-automation
+   ```
 
 2. Create a virtual environment
-python -m venv venv
+   ```bash
+   python -m venv venv
+   ```
 
 3. Activate the virtual environment
-- Windows (Git Bash): `source venv/Scripts/activate`
-- Windows (PowerShell): `.\venv\Scripts\Activate`
-- Linux/macOS: `source venv/bin/activate`
+   - Windows (Git Bash): 
+     ```bash
+     source venv/Scripts/activate
+     ```
+   - Windows (PowerShell): 
+     ```powershell
+     .\venv\Scripts\Activate
+     ```
+   - Linux/macOS: 
+     ```bash
+     source venv/bin/activate
+     ```
 
 4. Install dependencies
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 5. Configure environment variables
-cp .env.sample .env
-Edit the .env file with your API credentials and configuration
+   ```bash
+   cp .env.sample .env
+   ```
+   Edit the .env file with your API credentials and configuration
 
 ### Running the Application
 
 Start the Dash web server:
+```bash
 python app.py
+```
 
 The application will be available at http://localhost:8050
 
 ## Project Structure
+
+```
 healing-hands-data-automation/
 ├── app.py                 # Main Dash application
 ├── assets/                # CSS, images, and other static assets
@@ -69,6 +89,7 @@ healing-hands-data-automation/
 │   ├── script_runner.py   # Script execution utilities
 │   └── sharepoint_client.py # SharePoint integration
 └── output/                # Local output directory (git-ignored)
+```
 
 ## API Integration
 
@@ -96,7 +117,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - HCHB for providing the FHIR API
 - Dash and Plotly for the interactive visualization framework
-.env.sample
+
+## Environment Configuration
+
+Sample `.env` file configuration (copy from `.env.sample`):
+
+```
 # API Authentication
 CLIENT_ID=agency.client
 RESOURCE_SECURITY_ID=your_security_id_here
@@ -129,3 +155,4 @@ WEEKLY_APPOINTMENTS_FILENAME=weekly_appointments.csv
 COORDINATION_NOTES_FILENAME=coordination_notes_master.csv
 WORKERS_FILENAME=worker_data.csv
 ALERT_MEDIA_FILENAME=alert_media_data.csv
+```

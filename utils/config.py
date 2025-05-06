@@ -36,8 +36,8 @@ ENCOUNTER_BATCH_SIZE = int(os.getenv('ENCOUNTER_BATCH_SIZE', '100'))
 
 # Coordination Notes Configuration
 SYNC_BUFFER_MINUTES = int(os.getenv('SYNC_BUFFER_MINUTES', '30'))
-MAX_PAGES_PER_REQUEST = int(os.getenv('MAX_PAGES_PER_REQUEST', '1000'))
-PAGE_SIZE = int(os.getenv('PAGE_SIZE', '100'))
+MAX_PAGES_PER_REQUEST = int(os.getenv('MAX_PAGES_PER_REQUEST', '10000'))
+PAGE_SIZE = int(os.getenv('PAGE_SIZE', '500'))
 
 # Files and Outputs
 PATIENT_DATA_FILENAME = os.getenv('PATIENT_DATA_FILENAME', 'patient_data.csv')
