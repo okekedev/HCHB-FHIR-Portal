@@ -31,6 +31,8 @@ MAX_RETRIES = int(os.getenv('MAX_RETRIES', '3'))
 BATCH_SIZE = int(os.getenv('BATCH_SIZE', '100'))
 MAX_WORKERS = int(os.getenv('MAX_WORKERS', '5'))
 OUTPUT_DIRECTORY = os.getenv('OUTPUT_DIRECTORY', 'output')
+PATIENT_BATCH_SIZE = int(os.getenv('PATIENT_BATCH_SIZE', '1000'))
+ENCOUNTER_BATCH_SIZE = int(os.getenv('ENCOUNTER_BATCH_SIZE', '100'))
 
 # Files and Outputs
 PATIENT_DATA_FILENAME = os.getenv('PATIENT_DATA_FILENAME', 'patient_data.csv')
@@ -73,6 +75,8 @@ def get_config():
         'BATCH_SIZE': BATCH_SIZE,
         'MAX_WORKERS': MAX_WORKERS,
         'OUTPUT_DIRECTORY': OUTPUT_DIRECTORY,
+        'PATIENT_BATCH_SIZE': PATIENT_BATCH_SIZE,
+        'ENCOUNTER_BATCH_SIZE': ENCOUNTER_BATCH_SIZE,
         'PATIENT_DATA_FILENAME': PATIENT_DATA_FILENAME,
         'WEEKLY_APPOINTMENTS_FILENAME': WEEKLY_APPOINTMENTS_FILENAME,
         'COORDINATION_NOTES_FILENAME': COORDINATION_NOTES_FILENAME,
@@ -114,6 +118,8 @@ def print_config_summary(include_secrets=False):
     
     # Processing Configuration
     print(f"Batch Size: {BATCH_SIZE}")
+    print(f"Patient Batch Size: {PATIENT_BATCH_SIZE}")
+    print(f"Encounter Batch Size: {ENCOUNTER_BATCH_SIZE}")
     print(f"Max Workers: {MAX_WORKERS}")
     print(f"Output Directory: {OUTPUT_DIRECTORY}")
     

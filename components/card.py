@@ -63,3 +63,46 @@ def create_status_card():
             ]),
         ]),
     ], className="h-100 shadow")
+
+def create_script_card(title, description, script_id, script_path, api_details=None):
+    """
+    Create a script card for running automation scripts.
+    
+    Args:
+        title: Title of the script card
+        description: Description of the script
+        script_id: Unique ID for the script
+        script_path: Path to the script module
+        api_details: List of API details for the modal
+        
+    Returns:
+        dash component: A dbc.Card component
+    """
+    # Create the script card
+    return dbc.Card([
+        dbc.CardHeader([
+            html.H4(title, className="card-title"),
+        ]),
+        dbc.CardBody([
+            html.P(description, className="card-text"),
+            dbc.Button("Run Script", id=f"run-{script_id}", color="primary", className="mt-2"),
+            html.Div(id=f"output-{script_id}", className="mt-3 text-muted"),
+        ]),
+        dbc.CardFooter([
+            dbc.Button(
+                "View API Details", 
+                id=f"open-modal-{script_id}", 
+                color="link", 
+                className="text-decoration-none p-0"
+            ),
+            dbc.Modal([
+                dbc.ModalHeader(f"{title} - API Details"),
+                dbc.ModalBody([
+                    html.P(detail) for detail in (api_details or [])
+                ]),
+                dbc.ModalFooter(
+                    dbc.Button("Close", id=f"close-modal-{script_id}", className="ms-auto")
+                ),
+            ], id=f"modal-{script_id}", is_open=False),
+        ]),
+    ], className="h-100 shadow")
