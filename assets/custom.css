@@ -1,0 +1,104 @@
+/* Custom styling for Healing Hands Dashboard */
+
+/* Body styles */
+body {
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #3F7FBF;
+    border-color: #3F7FBF;
+}
+
+.btn-primary:hover {
+    background-color: #2D6DA8;
+    border-color: #2D6DA8;
+}
+
+/* Link styling */
+a {
+    color: #3F7FBF;
+}
+
+a:hover {
+    color: #2D6DA8;
+}
+
+/* Navbar styling */
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Card header styling */
+.card-header {
+    background-color: #F0F4F8;
+    border-bottom: 1px solid #E1E8F0;
+}
+
+.card-header h4 {
+    margin-bottom: 0;
+    color: #3F7FBF;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 4rem;
+}
+
+/* Status indicators */
+.text-success {
+    color: #28A745 !important;
+}
+
+.text-danger {
+    color: #DC3545 !important;
+}
+
+.text-info {
+    color: #17A2B8 !important;
+}
+
+.text-primary {
+    color: #3F7FBF !important;
+}
+
+/* Animation for loading */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,51 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.spyderproject
+.spyproject
+.ropeproject
+
+# Project specific
+output/
+logs/
+.env
+*.log
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# SharePoint credentials or tokens
+*_token.json
+credentials.json
