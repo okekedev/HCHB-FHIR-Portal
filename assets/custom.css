@@ -1,5 +1,6 @@
-/* Modern styling for Healing Hands Dashboard */
+/* Master CSS for Healing Hands Data Automation Dashboard */
 
+/* ------ Variables ------ */
 :root {
     --primary: #2A6EB8;     /* Primary blue from logo */
     --secondary: #6697D2;   /* Lighter blue accent */
@@ -17,7 +18,7 @@
     --border-radius: 8px;
   }
   
-  /* Body styles */
+  /* ------ Base Styles ------ */
   body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light);
@@ -25,7 +26,7 @@
     line-height: 1.6;
   }
   
-  /* Navbar styling */
+  /* ------ Navigation ------ */
   .navbar {
     background-color: var(--primary) !important;
     box-shadow: var(--shadow);
@@ -52,7 +53,7 @@
     background-color: rgba(255, 255, 255, 0.15);
   }
   
-  /* Card styling */
+  /* ------ Cards ------ */
   .card {
     border: none;
     border-radius: var(--border-radius);
@@ -91,12 +92,14 @@
     padding: 1rem 1.5rem;
   }
   
-  /* Button styling */
+  /* ------ Buttons ------ */
   .btn {
     font-weight: 500;
     padding: 0.5rem 1.25rem;
     border-radius: var(--border-radius);
     transition: var(--transition);
+    position: relative;
+    overflow: hidden;
   }
   
   .btn-primary {
@@ -131,7 +134,41 @@
     text-decoration: none;
   }
   
-  /* Progress bar styling */
+  /* Button ripple effect */
+  .btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .btn:hover::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    20% {
+      transform: scale(25, 25);
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(40, 40);
+    }
+  }
+  
+  /* ------ Progress Bars ------ */
   .progress {
     height: 12px;
     border-radius: var(--border-radius);
@@ -146,6 +183,30 @@
     transition: width 0.5s ease;
   }
   
+  .animated-progress .progress-bar {
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+    animation: progress-bar-stripes 1s linear infinite;
+  }
+  
+  @keyframes progress-bar-stripes {
+    from {
+      background-position: 1rem 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+  
   .progress-bar-success {
     background-color: var(--success);
   }
@@ -154,7 +215,7 @@
     background-color: var(--danger);
   }
   
-  /* Status indicators */
+  /* ------ Status Indicators ------ */
   .text-success {
     color: var(--success) !important;
   }
@@ -179,13 +240,13 @@
     background-color: var(--light) !important;
   }
   
-  /* Header styling */
+  /* ------ Headers ------ */
   .display-4 {
     font-weight: 700;
     color: var(--tertiary);
   }
   
-  /* Log output styling */
+  /* ------ Log Output ------ */
   .log-container {
     position: relative;
     background-color: var(--light-gray);
@@ -207,7 +268,7 @@
     white-space: pre-wrap;
   }
   
-  /* Modal styling */
+  /* ------ Modal Styling ------ */
   .modal-content {
     border-radius: var(--border-radius);
     border: none;
@@ -231,42 +292,326 @@
     padding: 1rem 1.5rem;
   }
   
-  /* Footer styling */
+  /* ------ Footer ------ */
   footer {
     padding: 2rem 0;
     margin-top: 3rem;
   }
   
-  /* Animations */
-  @keyframes pulse {
+  /* ------ Loading Indicators & Animations ------ */
+  
+  /* Google-style animated progress bar at the top of the page */
+  .animated-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    z-index: 9999;
+    background: linear-gradient(to right, 
+      var(--tertiary) 0%, 
+      var(--primary) 25%, 
+      var(--secondary) 50%, 
+      var(--accent) 75%, 
+      var(--tertiary) 100%);
+    background-size: 200% 100%;
+    animation: progress-bar-slide 2s linear infinite;
+  }
+  
+  @keyframes progress-bar-slide {
     0% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.8;
-      transform: scale(1.05);
+      background-position: 100% 0;
     }
     100% {
-      opacity: 1;
-      transform: scale(1);
+      background-position: 0 0;
     }
   }
   
-  .pulse {
+  /* Pulsing loading indicator */
+  .loading-pulse {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .loading-pulse::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+    background-size: 200% 100%;
+    animation: gradientSlide 2s infinite linear;
+    z-index: 10;
+  }
+  
+  @keyframes gradientSlide {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  /* Processing spinner animation */
+  .processing-spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid rgba(42, 110, 184, 0.2);
+    border-top-color: var(--primary);
+    border-right-color: var(--secondary);
+    border-bottom-color: var(--accent);
+    animation: spinner-colors 1.5s linear infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  
+  .processing-spinner-sm {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+    margin-right: 8px;
+  }
+  
+  @keyframes spinner-colors {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Status badges */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .status-badge-running {
+    background-color: rgba(42, 110, 184, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(42, 110, 184, 0.3);
+  }
+  
+  .status-badge-success {
+    background-color: rgba(60, 179, 113, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(60, 179, 113, 0.3);
+  }
+  
+  .status-badge-error {
+    background-color: rgba(230, 57, 70, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+  }
+  
+  /* Status badge with shimmer effect */
+  .status-badge-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .status-badge-shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 200%;
+    }
+  }
+  
+  /* Loading overlay for cards */
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(3px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .loading-overlay-content {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease;
+    max-width: 80%;
+  }
+  
+  .loading-overlay-icon {
+    margin-bottom: 15px;
+  }
+  
+  /* Success and error icons */
+  .success-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--success);
+    position: relative;
+  }
+  
+  .success-icon::before,
+  .success-icon::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+  }
+  
+  .success-icon::before {
+    width: 2px;
+    height: 6px;
+    transform: rotate(45deg);
+    top: 9px;
+    left: 6px;
+  }
+  
+  .success-icon::after {
+    width: 2px;
+    height: 10px;
+    transform: rotate(-45deg);
+    top: 6px;
+    left: 11px;
+  }
+  
+  .error-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--danger);
+    position: relative;
+  }
+  
+  .error-icon::before,
+  .error-icon::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 12px;
+    background-color: white;
+    top: 4px;
+    left: 9px;
+  }
+  
+  .error-icon::before {
+    transform: rotate(45deg);
+  }
+  
+  .error-icon::after {
+    transform: rotate(-45deg);
+  }
+  
+  /* Loading dots animation */
+  .loading-dots::after {
+    content: "";
+    animation: loading-dots 1.5s infinite;
+  }
+  
+  @keyframes loading-dots {
+    0%, 20% {
+      content: ".";
+    }
+    40% {
+      content: "..";
+    }
+    60% {
+      content: "...";
+    }
+    80%, 100% {
+      content: "";
+    }
+  }
+  
+  /* Pulse animation */
+  .pulse-animation {
     animation: pulse 2s infinite;
   }
   
-  /* Loading spinner */
-  .spinner-border {
-    border-width: 0.15em;
-    border-right-color: transparent !important;
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(42, 110, 184, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(42, 110, 184, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(42, 110, 184, 0);
+    }
   }
   
-  .spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
+  /* Active process cards animation */
+  .active-process-card {
+    border-left: 4px solid var(--primary);
+    transition: all 0.3s ease;
   }
+  
+  .active-process-card:hover {
+    transform: translateX(5px);
+    border-left-color: var(--accent);
+  }
+  
+  /* Fade-in animation for cards and elements */
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Apply fade-in animation with delays to create a cascade effect */
+  .fade-in-cascade-1 { animation-delay: 0.1s; }
+  .fade-in-cascade-2 { animation-delay: 0.2s; }
+  .fade-in-cascade-3 { animation-delay: 0.3s; }
+  .fade-in-cascade-4 { animation-delay: 0.4s; }
+  .fade-in-cascade-5 { animation-delay: 0.5s; }
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
@@ -286,135 +631,13 @@
     .display-4 {
       font-size: 2rem;
     }
-  }
-
-  /* Add these CSS rules to assets/custom.css */
-
-/* Pulsing loading indicator */
-.loading-pulse {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .loading-pulse::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
-    background-size: 200% 100%;
-    animation: gradientSlide 2s infinite linear;
-    z-index: 10;
-  }
-  
-  /* Gradient animation */
-  @keyframes gradientSlide {
-    0% {
-      background-position: 0% 0;
+    
+    .animated-progress-bar {
+      height: 3px;
     }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-  
-  /* Processing animation for spinner */
-  .processing-spinner {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 3px solid rgba(74, 144, 226, 0.2);
-    border-top-color: var(--primary);
-    animation: spinner 1s infinite ease-in-out;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-  
-  @keyframes spinner {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Status badge */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 15px;
-  }
-  
-  .status-badge-running {
-    background-color: rgba(74, 144, 226, 0.1);
-    color: var(--primary);
-    border: 1px solid rgba(74, 144, 226, 0.3);
-  }
-  
-  .status-badge-success {
-    background-color: rgba(60, 179, 113, 0.1);
-    color: var(--success);
-    border: 1px solid rgba(60, 179, 113, 0.3);
-  }
-  
-  .status-badge-error {
-    background-color: rgba(230, 57, 70, 0.1);
-    color: var(--danger);
-    border: 1px solid rgba(230, 57, 70, 0.3);
-  }
-  
-  /* Loading overlay */
-  .loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: var(--border-radius);
-    z-index: 1000;
-  }
-  
-  .loading-overlay-content {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .loading-overlay-icon {
-    margin-bottom: 15px;
-  }
-  
-  .loading-dots {
-    display: inline-block;
-  }
-  
-  .loading-dots::after {
-    content: ".";
-    animation: dots 1.5s steps(5, end) infinite;
-  }
-  
-  @keyframes dots {
-    0%, 20% {
-      content: ".";
-    }
-    40% {
-      content: "..";
-    }
-    60% {
-      content: "...";
-    }
-    80%, 100% {
-      content: "";
+    
+    .processing-spinner {
+      width: 24px;
+      height: 24px;
     }
   }

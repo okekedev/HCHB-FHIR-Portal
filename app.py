@@ -27,7 +27,7 @@ app = dash.Dash(
     suppress_callback_exceptions=True
 )
 
-app.title = "Healing Hands Data Automation"
+app.title = "HCHB FHIR Integration"
 server = app.server  # For deployment
 
 # Define script cards configuration for easier maintenance
@@ -112,72 +112,161 @@ script_configs = [
 # Dashboard layout
 app.layout = html.Div([
     # Navigation bar at the top
-    create_navbar(),
+    dbc.Navbar(
+        dbc.Container([
+            # Brand/logo with improved styling
+            html.A(
+                [
+                    html.Img(src="/assets/logo.png", height="36px", className="me-3 d-inline-block align-middle"),
+                    dbc.NavbarBrand("FHIR Data Automation", className="ms-2 d-inline-block align-middle"),
+                ],
+                href="/",
+                style={"textDecoration": "none"},
+                className="d-flex align-items-center"
+            ),
+            # Toggle button for mobile view
+            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            # Simplified navigation - only showing Dashboard
+            dbc.Collapse(
+                dbc.Nav(
+                    [
+                        dbc.NavItem(dbc.NavLink("Dashboard", href="#", active=True)),
+                    ],
+                    navbar=True,
+                    className="ms-auto align-items-center"
+                ),
+                id="navbar-collapse",
+                navbar=True,
+                is_open=False,
+            ),
+        ], fluid=True),
+        color="primary",
+        dark=True,
+        className="mb-4 py-2 shadow",
+        sticky="top",
+    ),
+    
+    # Animated progress bar at the top (initially hidden)
+    html.Div(id="animated-progress-bar", className="animated-progress-bar", style={"display": "none"}),
     
     # Main container
     dbc.Container([
-        # Header with improved styling
+        # Active Processes Section (at the top)
         dbc.Row([
             dbc.Col([
-                html.Div([
-                    html.H1([
-                        html.I(className="fas fa-heartbeat me-3 text-danger"),
-                        "Healing Hands Data Automation"
-                    ], className="display-4 text-center text-primary my-4 d-flex align-items-center justify-content-center"),
-                    html.P("Streamline patient data collection and care coordination with intelligent automation", 
-                           className="lead text-center text-muted mb-4"),
-                    html.Hr(className="my-4"),
-                ], className="text-center")
-            ])
+                dbc.Card([
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-tasks me-3"),
+                            "Active Processes"
+                        ], className="card-title d-flex align-items-center"),
+                    ]),
+                    dbc.CardBody([
+                        # API operations indicator (initially hidden)
+                        html.Div([
+                            html.Div(className="processing-spinner"),
+                            html.Span("API Operations Active", className="ms-2")
+                        ], id="api-active-indicator", className="status-badge status-badge-running mb-4", 
+                           style={"display": "none"}),
+                        
+                        html.Div(id="active-processes-list", children=[
+                            html.P("No active processes", className="text-muted")
+                        ], className="p-3")
+                    ])
+                ], className="shadow h-100")
+            ], width=12, className="mb-5"),
         ]),
         
-        # Dashboard quick stats
+        # System Status Cards - Two column design
         dbc.Row([
             dbc.Col([
-                dbc.Card([
-                    html.Div([
-                        html.I(className="fas fa-users fa-2x text-primary"),
-                        html.H4("Patient Data", className="mt-3 mb-0"),
-                        html.P("Demographics & Coordination", className="text-muted")
-                    ], className="text-center p-4")
-                ], className="shadow-sm border-0 rounded mb-4")
-            ], width=3),
+                html.H2([
+                    html.I(className="fas fa-chart-line me-3"),
+                    "System Status"
+                ], className="mb-5 mt-4 d-flex align-items-center"),
+            ], width=12),
+            
+            # Left Status Column
             dbc.Col([
                 dbc.Card([
-                    html.Div([
-                        html.I(className="fas fa-calendar-alt fa-2x text-primary"),
-                        html.H4("Appointments", className="mt-3 mb-0"),
-                        html.P("Weekly Scheduling & Visits", className="text-muted")
-                    ], className="text-center p-4")
-                ], className="shadow-sm border-0 rounded mb-4")
-            ], width=3),
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-server me-3"),
+                            "API Connection"
+                        ], className="card-title d-flex align-items-center"),
+                    ]),
+                    dbc.CardBody([
+                        html.Div([
+                            html.Div([
+                                html.Span("API Status: ", className="fw-bold me-2"),
+                                html.Span([
+                                    html.I(className="fas fa-check-circle text-success me-2"),
+                                    "Connected"
+                                ], className="d-inline-flex align-items-center")
+                            ], className="mb-4"),
+                            html.Div([
+                                html.Span("API URL: ", className="fw-bold me-2"),
+                                html.Code(os.getenv('API_BASE_URL', 'https://api.hchb.com/fhir/r4'),
+                                         className="bg-light rounded px-2 py-1")
+                            ], className="mb-4"),
+                            html.Div([
+                                html.Span("Last Refresh: ", className="fw-bold me-2"),
+                                html.Div(id="last-refresh", className="d-inline")
+                            ], className="mb-4"),
+                            html.Div([
+                                html.Span("Environment: ", className="fw-bold me-2"),
+                                html.Span(os.getenv('ENV', 'Production'), className="text-primary")
+                            ], className="mb-2")
+                        ], className="p-2")
+                    ], className="p-4")
+                ], className="shadow h-100")
+            ], md=6, className="mb-5"),
+            
+            # Right Status Column
             dbc.Col([
                 dbc.Card([
-                    html.Div([
-                        html.I(className="fas fa-clipboard fa-2x text-primary"),
-                        html.H4("Coordination", className="mt-3 mb-0"),
-                        html.P("Notes & Documentation", className="text-muted")
-                    ], className="text-center p-4")
-                ], className="shadow-sm border-0 rounded mb-4")
-            ], width=3),
-            dbc.Col([
-                dbc.Card([
-                    html.Div([
-                        html.I(className="fas fa-bell fa-2x text-primary"),
-                        html.H4("Alerts", className="mt-3 mb-0"),
-                        html.P("Critical Notifications", className="text-muted")
-                    ], className="text-center p-4")
-                ], className="shadow-sm border-0 rounded mb-4")
-            ], width=3),
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-tachometer-alt me-3"),
+                            "Processing Status"
+                        ], className="card-title d-flex align-items-center"),
+                    ]),
+                    dbc.CardBody([
+                        html.Div([
+                            html.Div([
+                                html.Span("Current Process: ", className="fw-bold me-2"),
+                                html.Span(id="current-process", className="text-primary fw-bold")
+                            ], className="mb-4"),
+                            html.Div([
+                                html.Span("Progress: ", className="fw-bold mb-2 d-block"),
+                                dbc.Progress(
+                                    id="progress-bar", 
+                                    value=0, 
+                                    label="0%",
+                                    style={"height": "12px"}, 
+                                    className="mb-3 animated-progress"
+                                ),
+                                html.P(id="progress-text", children="No active process", 
+                                      className="text-muted fs-6")
+                            ], className="mb-4"),
+                            html.Div([
+                                html.Span("Data Processed: ", className="fw-bold me-2"),
+                                html.Div(id="data-processed", children="0 records", 
+                                       className="text-primary")
+                            ], className="mb-2")
+                        ], className="p-2")
+                    ], className="p-4")
+                ], className="shadow h-100")
+            ], md=6, className="mb-5"),
         ]),
         
         # Main content - Script cards
         dbc.Row([
             dbc.Col([
                 html.H2([
-                    html.I(className="fas fa-tasks me-2"),
+                    html.I(className="fas fa-tasks me-3"),
                     "Automation Tools"
-                ], className="mb-4 mt-2 d-flex align-items-center"),
+                ], className="mb-5 mt-4 d-flex align-items-center"),
             ], width=12),
         ]),
         
@@ -185,102 +274,25 @@ app.layout = html.Div([
         dbc.Row([
             dbc.Col([
                 create_script_card(**config)
-            ], md=6, xl=4, className="mb-4")
+            ], md=6, xl=4, className="mb-5")
             for config in script_configs[:3]  # First 3 cards in first row
-        ]),
+        ], className="mb-3"),
         
         # Second row of script cards (dynamically generated from config)
         dbc.Row([
             dbc.Col([
                 create_script_card(**config)
-            ], md=6, className="mb-4")
+            ], md=6, className="mb-5")
             for config in script_configs[3:]  # Remaining cards in second row
-        ]),
-        
-        # System Status Card in a separate row
-        dbc.Row([
-            dbc.Col([
-                html.H2([
-                    html.I(className="fas fa-chart-line me-2"),
-                    "System Status"
-                ], className="mb-4 mt-2 d-flex align-items-center"),
-            ], width=12),
-            
-            # Enhanced status card with active process monitoring
-            dbc.Col([
-                # API operations indicator (initially hidden)
-                html.Div([
-                    html.Div(className="processing-spinner"),
-                    html.Span("API Operations Active", className="ms-2")
-                ], id="api-active-indicator", className="status-badge status-badge-running mb-3", 
-                   style={"display": "none"}),
-                
-                # Main status card
-                create_status_card()
-            ], md=12, xl=6, className="mb-4"),
-            
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader([
-                        html.H4([
-                            html.I(className="fas fa-cogs me-2"),
-                            "Environment"
-                        ], className="card-title d-flex align-items-center"),
-                    ]),
-                    dbc.CardBody([
-                        html.P([
-                            html.Span("API Status: ", className="fw-bold me-2"),
-                            html.Span([
-                                html.I(className="fas fa-check-circle text-success me-2"),
-                                "Connected"
-                            ], className="d-inline-flex align-items-center")
-                        ]),
-                        html.P([
-                            html.Span("API URL: ", className="fw-bold me-2"),
-                            html.Code(os.getenv('API_BASE_URL', 'https://api.hchb.com/fhir/r4'),
-                                     className="bg-light rounded px-2 py-1")
-                        ]),
-                        html.P([
-                            html.Span("Environment: ", className="fw-bold me-2"),
-                            html.Span(os.getenv('ENV', 'Production'), className="text-primary")
-                        ]),
-                        html.P([
-                            html.Span("Output Directory: ", className="fw-bold me-2"),
-                            html.Code(os.getenv('OUTPUT_DIRECTORY', 'output'),
-                                     className="bg-light rounded px-2 py-1")
-                        ])
-                    ])
-                ], className="shadow h-100")
-            ], md=12, xl=6, className="mb-4"),
-        ]),
-        
-        # Active Processes Section
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader([
-                        html.H4([
-                            html.I(className="fas fa-tasks me-2"),
-                            "Active Processes"
-                        ], className="card-title d-flex align-items-center"),
-                    ]),
-                    dbc.CardBody([
-                        html.Div(id="active-processes-list", children=[
-                            html.P("No active processes", className="text-muted")
-                        ])
-                    ])
-                ], className="shadow h-100")
-            ], width=12, className="mb-4"),
-        ]),
+        ], className="mb-5"),
         
         # Footer
         html.Footer([
-            html.Hr(className="my-4"),
+            html.Hr(className="my-5"),
             dbc.Row([
                 dbc.Col([
                     html.P([
-                        html.I(className="fas fa-heartbeat me-2 text-danger"),
-                        "Healing Hands Data Automation Dashboard © 2025"
+                        "FHIR Data Automation Dashboard © 2025"
                     ], className="text-center text-muted mb-1"),
                     html.P([
                         "Powered by ",
@@ -288,8 +300,8 @@ app.layout = html.Div([
                     ], className="text-center text-muted small")
                 ])
             ])
-        ], className="mt-4"),
-    ], fluid=True, className="p-4"),
+        ], className="mt-5"),
+    ], fluid=True, className="p-5"),
     
     # Store for tracking active processes
     dcc.Store(id="process-status"),
@@ -303,5 +315,5 @@ register_all_callbacks(app)
 
 # Print message when starting the app
 if __name__ == "__main__":
-    print("Starting Healing Hands Data Automation dashboard at http://127.0.0.1:8050")
+    print("Starting FHIR Data Automation dashboard at http://127.0.0.1:8050")
     app.run_server(debug=True)
